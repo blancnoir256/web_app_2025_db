@@ -191,3 +191,21 @@ func GetMeHandler(c echo.Context) error {
 		Username: c.Get("userName").(string),
 	})
 }
+
+func (h *Handler) LogoutHandler(c echo.Context) error {
+	sess, err := session.Get("sessions", c)
+	if err != nil {
+		log.Println(err)
+		return c.String(http.StatusInternalServerError, "something wrong in getting session")
+	}
+	if sess.Values["userName"] == nil {
+		return c.String(http.StatusUnauthorized, "please login")
+	}
+	sess.Options.MaxAge = -1                   // セッション削除
+	err = sess.Save(c.Request(), c.Response()) // 変更を保存
+	if err != nil {
+		log.Println(err)
+		return c.String(http.StatusInternalServerError, "failed to save session")
+	}
+	return c.NoContent(http.StatusOK)
+}

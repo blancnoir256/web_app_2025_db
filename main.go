@@ -66,6 +66,7 @@ func main() {
 
 	e.POST("/signup", h.SignUpHandler)
 	e.POST("/login", h.LoginHandler)
+	e.POST("/logout", h.LogoutHandler)
 	e.GET("/ping", func(c echo.Context) error { return c.String(http.StatusOK, "pong") })
 
 	withAuth := e.Group("")
